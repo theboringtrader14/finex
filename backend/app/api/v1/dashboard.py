@@ -25,10 +25,17 @@ async def get_dashboard():
 
 @router.get("/briefing/today")
 async def get_today_briefing():
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    from app.core.config import settings
     context = await fetch_context()
     text = await generate_daily_briefing(context)
-    from app.core.config import settings
-    return {"briefing": text, "source": "ai" if settings.google_ai_api_key else "static"}
+    now = datetime.now(ZoneInfo("Asia/Kolkata"))
+    return {
+        "text": text,
+        "generated_at": now.isoformat(),
+        "source": "ai" if settings.google_ai_api_key else "static",
+    }
 
 
 @router.get("/briefing/history")
